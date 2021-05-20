@@ -20,4 +20,8 @@ class HomeController extends Controller
         }
         return view('dashboard.user');
     }
+
+    public function rangkingUser() {
+        return view('rangking.user-rangking');
+    }
 }

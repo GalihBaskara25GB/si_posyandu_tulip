@@ -29,6 +29,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('home', [HomeController::class, 'index'])->name('home');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
+    //Users Page
+    Route::group(['middleware' => ['checkIfAdmin:user']], function () {
+        Route::get('/rangking', [HomeController::class, 'rangkingUser'])->name('rangking');
+    });
+
+    //Admins Page
     Route::group(['middleware' => ['checkIfAdmin:administrator']], function () {
         //Kaders Route
         Route::get('/kaders/print_pdf', [KaderController::class, 'generatePdf']);
