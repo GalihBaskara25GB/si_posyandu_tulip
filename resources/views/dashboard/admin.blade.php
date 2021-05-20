@@ -21,7 +21,7 @@
               <span class="report-count"> Kader</span>
             </div>
             <div class="inner-card-icon bg-success">
-              <i class="icon-rocket"></i>
+              <i class="icon-people"></i>
             </div>
           </div>
           <div class="col-md-6 col-xl report-inner-card">
@@ -31,7 +31,7 @@
               <span class="report-count">Kriteria</span>
             </div>
             <div class="inner-card-icon bg-danger">
-              <i class="icon-briefcase"></i>
+              <i class="icon-layers"></i>
             </div>
           </div>
           <div class="col-md-6 col-xl report-inner-card">
@@ -41,7 +41,7 @@
               <span class="report-count"> User</span>
             </div>
             <div class="inner-card-icon bg-warning">
-              <i class="icon-globe-alt"></i>
+              <i class="icon-credit-card"></i>
             </div>
           </div>
         </div>

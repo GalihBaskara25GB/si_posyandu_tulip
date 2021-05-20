@@ -79,7 +79,7 @@
                         Daftar
                     </button>
                   </div>
-                  <div class="text-center mt-4 font-weight-light"> Sudah punya akun? <a href="{{ route('login') }}">Login</a> sekarang!
+                  <div class="text-center mt-4 font-weight-light"> Sudah punya akun? <a href="{{ route('login') }}" class="text-primary">Login</a> sekarang!
                   </div>
                 </form>
               </div>
