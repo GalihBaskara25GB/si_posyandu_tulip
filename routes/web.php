@@ -7,6 +7,7 @@ use App\Http\Controllers\KaderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\RangkingController;
+use App\Http\Controllers\PerhitunganController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,9 @@ Route::get('login', [AuthController::class, 'showFormLogin'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
 Route::get('register', [AuthController::class, 'showFormRegister'])->name('register');
 Route::post('register', [AuthController::class, 'register']);
+
+Route::get('ahp', [PerhitunganController::class, 'ahp'])->name('ahp');
+
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('home', [HomeController::class, 'index'])->name('home');
