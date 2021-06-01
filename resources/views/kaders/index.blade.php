@@ -97,7 +97,7 @@
           </div>
           <div class="d-flex mt-4 flex-wrap">
             <nav class="ml-auto">
-              {!! $kaders->links() !!}
+            {!! ($numRecords > 0) ? $kaders->links() : '' !!}
             </nav>
           </div>
         </div>

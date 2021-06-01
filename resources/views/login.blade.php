@@ -9,7 +9,7 @@
                 <div class="brand-logo text-center">
                   <img src="{{asset('assets/images/logo.png')}}">
                 </div>
-                <h4>Hello! selamat datang</h4>
+                <h4>Selamat Datang di Aplikasi Seleksi Calon Kader Posyandu Tulip</h4>
                 <h6 class="font-weight-light">Sign in untuk melanjutkan.</h6>
                 <form class="pt-3" action="{{ route('login') }}" method="post">
                 @csrf

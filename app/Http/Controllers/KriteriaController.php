@@ -49,7 +49,7 @@ class KriteriaController extends Controller
   
     public function create()
     {
-        $kaders = Kader::all();
+        $kaders = Kader::doesnthave('kriteria')->get();
         return view('kriterias.create', compact('kaders'));
     }
   
@@ -68,7 +68,7 @@ class KriteriaController extends Controller
   
     public function edit(Kriteria $kriteria)
     {
-        $kaders = Kader::all();
+        $kaders = Kader::doesnthave('kriteria')->get();
         return view('kriterias.edit',compact('kriteria', 'kaders'));
     }
   

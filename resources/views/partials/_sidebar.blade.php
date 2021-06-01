@@ -37,14 +37,14 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" href="{{route('rangkings.index')}}">
-        <span class="menu-title">Rangking</span>
+        <span class="menu-title">Rangking AHP-TOPSIS</span>
         <i class="icon-chart menu-icon"></i>
       </a>
     </li>
     @else
     <li class="nav-item">
       <a class="nav-link" href="{{route('rangking')}}">
-        <span class="menu-title">Rangking</span>
+        <span class="menu-title">Rangking AHP-TOPSIS</span>
         <i class="icon-chart menu-icon"></i>
       </a>
     </li>
