@@ -1,8 +1,13 @@
 @extends('templateContent')
 
 @section('content')
-  @include('rangking.quickbar-perhitungan')
 
+  @if (Session::get('success') || Session::get('errors') || !is_null($message))
+    @include('partials.alert')
+  @endif
+
+  @include('rangking.quickbar-perhitungan')
+ 
   <div class="row">
     <div class="col-md-12 grid-margin stretch-card">
       <div class="card">
@@ -21,31 +26,31 @@
               <tbody>
                 <tr>
                   <td>Pendidikan</td>
-                  <td>0</td>
+                  <td>{{ $ahp->matrix[$i=0]->avg }}</td>
                 </tr>
                 <tr>
                   <td>Keaktifan Sosial</td>
-                  <td>0</td>
+                  <td>{{ $ahp->matrix[++$i]->avg }}</td>
                 </tr>
                 <tr>
                   <td>Kepribadian</td>
-                  <td>0</td>
+                  <td>{{ $ahp->matrix[++$i]->avg }}</td>
                 </tr>
                 <tr>
                   <td>Penyakit Berat</td>
-                  <td>0</td>
+                  <td>{{ $ahp->matrix[++$i]->avg }}</td>
                 </tr>
                 <tr>
                   <td>Pengetahuan Kesehatan</td>
-                  <td>0</td>
+                  <td>{{ $ahp->matrix[++$i]->avg }}</td>
                 </tr>
                 <tr>
                   <td>Keahlian Komputer</td>
-                  <td>0</td>
+                  <td>{{ $ahp->matrix[++$i]->avg }}</td>
                 </tr>
                 <tr>
                   <td>Kepemilikan HP</td>
-                  <td>0</td>
+                  <td>{{ $ahp->matrix[++$i]->avg }}</td>
                 </tr>
               </tbody>
             </table>
@@ -67,7 +72,7 @@
           <div class="d-sm-flex align-items-center mb-4">
             <h4 class="card-title mb-sm-0">Hasil Perangkingan Dengan Metode TOPSIS</h4>
             <a href="#" class="text-dark ml-auto mb-3 mb-sm-0 text-decoration-none disabled">  
-              Total Data : 
+              Total Data : {{ $numRecords }}
             </a>
           </div>
           <div class="col-12">
@@ -106,15 +111,20 @@
                 </tr>
               </thead>
               <tbody>
+              @php
+                $currentPage = Request::__get('page');
+                (is_null($currentPage)) ? $i = 1 : $i = (($currentPage-1)*5)+1;
+              @endphp
+              @foreach ($rangkings as $rangking)
                 <tr>
-                  <td>1</td>
-                  <td>0.665</td>
-                  <td>Galih Aditya</td>
-                  <td>+6282257934698</td>
+                  <td>{{(is_null(Request::__get('field'))) ? $i++ : $rangking->getRank()}}</td>
+                  <td>{{$rangking->nilai_preferensi}}</td>
+                  <td>{{$rangking->kader->nama}}</td>
+                  <td>{{$rangking->kader->nomor_telepon}}</td>
                   <td>
                     <a 
                       target="_new" 
-                      href="https://api.whatsapp.com/send?phone=6282257934698&text=Hai+Galih+Aditya" class="btn btn-sm btn-success">
+                      href="https://api.whatsapp.com/send?phone={{substr($rangking->kader->nomor_telepon, 1)}}&text=Hai+{{str_replace(' ', '+', $rangking->kader->nama)}}" class="btn btn-sm btn-success">
                       Hubungi Via Whatsapp
                     </a>
                     <a href="#" class="btn btn-sm btn-outline-info">
@@ -122,11 +132,13 @@
                     </a>
                   </td>
                 </tr>
+                @endforeach
               </tbody>
             </table>
           </div>
           <div class="d-flex mt-4 flex-wrap">
             <nav class="ml-auto">
+              {!! ($numRecords > 0) ? $rangkings->links() : '' !!}
             </nav>
           </div>
         </div>

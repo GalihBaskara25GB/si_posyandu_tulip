@@ -27,6 +27,7 @@ Route::get('register', [AuthController::class, 'showFormRegister'])->name('regis
 Route::post('register', [AuthController::class, 'register']);
 
 Route::get('ahp', [PerhitunganController::class, 'ahp'])->name('ahp');
+Route::get('topsis', [PerhitunganController::class, 'topsis'])->name('topsis');
 
 
 Route::group(['middleware' => 'auth'], function () {
