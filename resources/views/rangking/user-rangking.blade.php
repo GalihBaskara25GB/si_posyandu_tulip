@@ -6,9 +6,17 @@
       <div class="card card-info">
         <span class="card-body d-lg-flex align-items-center">
           <p class="mb-lg-0">
-            Selamat Anda Diterima Menjadi Kader Posyandu, 
-            Pastikan Nomor Anda Dapat Dihubungi Via Whatsapp Untuk Instruksi Selanjutnya !<br/>
-            Atau Datangi Kantor Posyandu Untuk Mendapatkan Instruksi Selanjutnya
+            @php
+              if(is_null($currentUserRank)) {
+                $message = 'Data anda belum dilakukan perangkingan ! Silahkan lakukan verifikasi data terlebih dahulu.';
+              } else {
+                $message = 'Anda berada pada rangking <b>'.$currentUserRank->getRank().'</b> !
+                            Pastikan Nomor Anda Dapat Dihubungi Via Whatsapp Untuk Instruksi Selanjutnya !
+                            Atau Datangi Kantor Posyandu Untuk Mendapatkan Instruksi Selanjutnya';
+              }
+
+              echo $message;
+            @endphp
           </p>
           <button class="close popup-dismiss ml-2">
             <span aria-hidden="true">&times;</span>
@@ -25,11 +33,11 @@
           <div class="d-sm-flex align-items-center mb-4">
             <h4 class="card-title mb-sm-0">Rangking Calon Kader</h4>
             <a href="#" class="text-dark ml-auto mb-3 mb-sm-0 text-decoration-none disabled">  
-              Total Data : 
+              Total Data : {{ $numRecords }}
             </a>
           </div>
           <div class="col-12">
-            <form class="form-sample" action="{{route('rangkings.index')}}" method="GET">
+            <form class="form-sample" action="{{route('rangking')}}" method="GET">
               <div class="form-group">
                 <div class="input-group">
                   <div class="input-group-append">
@@ -61,14 +69,24 @@
                   <th class="font-weight-bold">Nama Kader</th>
                 </tr>
               </thead>
-              <tbody>
+              @php
+                $currentPage = Request::__get('page');
+                (is_null($currentPage)) ? $i = 1 : $i = (($currentPage-1)*5)+1;
+              @endphp
+              @foreach ($rangkings as $rangking)
                 <tr>
-                  <td>1</td>
-                  <td>0.665</td>
-                  <td>Galih Aditya</td>
+                  <td>{{(is_null(Request::__get('field'))) ? $i++ : $rangking->getRank()}}</td>
+                  <td>{{$rangking->nilai_preferensi}}</td>
+                  <td>{{$rangking->kader->nama}}</td>
                 </tr>
+              @endforeach
               </tbody>
             </table>
+          </div>
+          <div class="d-flex mt-4 flex-wrap">
+            <nav class="ml-auto">
+              {!! ($numRecords > 0) ? $rangkings->links() : '' !!}
+            </nav>
           </div>
           <div class="d-flex mt-4 flex-wrap">
             <nav class="ml-auto">
