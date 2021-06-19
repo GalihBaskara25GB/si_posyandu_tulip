@@ -17,7 +17,7 @@ class RangkingController extends Controller
     public function index(Request $request)
     {
         //
-        $dataPerPage = 5;
+        $dataPerPage = 10;
 
         $rangkings = Rangking::orderBy('nilai_preferensi', 'desc')->paginate($dataPerPage);
         $numRecords = Rangking::count();
@@ -217,81 +217,114 @@ class RangkingController extends Controller
             $sumMempunyaiHp += $key->mempunyai_hp;
         }
 
-        $kriteria = ['Pendidikan', 'Penyakit Berat', 'Pengetahuan Kesehatan', 'Keaktifan Sosial', 'Keahlian Komputer', 'Kepribadian', 'Mempunyai HP'];
-        $tempBobot = $matrix;
-        for ($i = 0; $i < 7; $i++) {
-            // $tempBobot[$i]->kriteria = $kriteria[$i];
-            $tempBobot[$i]->pendidikan = (($matrix[$i]->pendidikan / $sumPendidikan));
-            $tempBobot[$i]->penyakit_berat = (($matrix[$i]->penyakit_berat / $sumPenyakitBerat));
-            $tempBobot[$i]->pengetahuan_kesehatan = (($matrix[$i]->pengetahuan_kesehatan / $sumPengetahuanKesehatan));
-            $tempBobot[$i]->keaktifan_sosial = (($matrix[$i]->keaktifan_sosial / $sumKeaktifanSosial));
-            $tempBobot[$i]->keahlian_komputer = (($matrix[$i]->keahlian_komputer / $sumKeahlianKomputer));
-            $tempBobot[$i]->kepribadian = (($matrix[$i]->kepribadian / $sumKepribadian));
-            $tempBobot[$i]->mempunyai_hp = (($matrix[$i]->mempunyai_hp / $sumMempunyaiHp));
-        }
+        // dd($sumPendidikan);
 
-        $mKriteria = $tempBobot;
-        foreach ($mKriteria as $key) {
-            $sum = $key->pendidikan + $key->penyakit_berat + $key->pengetahuan_kesehatan + $key->keaktifan_sosial + $key->keahlian_komputer + $key->kepribadian + $key->mempunyai_hp;
-            $avg = $sum / 7;
-            $key->avg = ($avg);
-            // $key->update();
-        }
+        //mencari eigen
+        $eigenPendidikan = pow(($matrix[0]->pendidikan * $matrix[0]->penyakit_berat * $matrix[0]->pengetahuan_kesehatan * $matrix[0]->keaktifan_sosial * 
+                            $matrix[0]->keahlian_komputer * $matrix[0]->kepribadian * $matrix[0]->mempunyai_hp), (1/7));
+                            
+        $eigenKeaktifanSosial = pow(($matrix[1]->pendidikan * $matrix[1]->penyakit_berat * $matrix[1]->pengetahuan_kesehatan * $matrix[1]->keaktifan_sosial * 
+                               $matrix[1]->keahlian_komputer * $matrix[1]->kepribadian * $matrix[1]->mempunyai_hp), (1/7));
 
+        $eigenKepribadian = pow(($matrix[2]->pendidikan * $matrix[2]->penyakit_berat * $matrix[2]->pengetahuan_kesehatan * $matrix[2]->keaktifan_sosial * 
+                                      $matrix[2]->keahlian_komputer * $matrix[2]->kepribadian * $matrix[2]->mempunyai_hp), (1/7));
 
-        //Hitung Konsistensi Bobot
+        $eigenPenyakitBerat = pow(($matrix[3]->pendidikan * $matrix[3]->penyakit_berat * $matrix[3]->pengetahuan_kesehatan * $matrix[3]->keaktifan_sosial * 
+                                 $matrix[3]->keahlian_komputer * $matrix[3]->kepribadian * $matrix[3]->mempunyai_hp), (1/7));
         
-        $tempA = $matrix;
-        $tempW = $mKriteria;
-        $matrixA = [[]];
+        $eigenPengetahuanKesehatan = pow(($matrix[4]->pendidikan * $matrix[4]->penyakit_berat * $matrix[4]->pengetahuan_kesehatan * $matrix[4]->keaktifan_sosial * 
+                                  $matrix[4]->keahlian_komputer * $matrix[4]->kepribadian * $matrix[4]->mempunyai_hp), (1/7));
 
-        $i = 0;
-        foreach ($tempA as $key) {
-            $matrixA[$i][0] = $key->pendidikan;
-            $matrixA[$i][1] = $key->penyakit_berat;
-            $matrixA[$i][2] = $key->pengetahuan_kesehatan;
-            $matrixA[$i][3] = $key->keaktifan_sosial;
-            $matrixA[$i][4] = $key->keahlian_komputer;
-            $matrixA[$i][5] = $key->kepribadian;
-            $matrixA[$i][6] = $key->mempunyai_hp;
-            $i++;
-        }
-
-        $matrixW = [[]];
-        $i = 0;
-        foreach ($tempW as $key) {
-            $matrixW[$i][0] = $key->avg;
-            $i++;
-        }
-
-        $matA = new NumArray($matrixA);
-        $matW = new NumArray($matrixW);
-        $matA->dot($matW);
-
-        $final = $matA->getData();
-
-        for ($i = 0; $i < 7; $i++) {
-            $tempW[$i]->matrix_aw = $final[$i][0];
-            // $tempW[$i]->save();
-        }
-
-        $lambda = 0;
-        foreach ($tempW as $key) {
-            $lambda += ($key->matrix_aw / $key->avg);
-        }
-        // $lambda /= 7;
-
-        $ci = (($lambda - 7) / (7 - 1));
-        $cr = ($ci / 1.32);
-
-        ($cr <= 0.1) ? $status = 'KONSISTEN' : $status = 'TIDAK KONSISTEN';;
+        $eigenKeahlianKomputer = pow(($matrix[5]->pendidikan * $matrix[5]->penyakit_berat * $matrix[5]->pengetahuan_kesehatan * $matrix[5]->keaktifan_sosial * 
+                             $matrix[5]->keahlian_komputer * $matrix[5]->kepribadian * $matrix[5]->mempunyai_hp), (1/7));
         
+        $eigenMempunyaiHp = pow(($matrix[6]->pendidikan * $matrix[6]->penyakit_berat * $matrix[6]->pengetahuan_kesehatan * $matrix[6]->keaktifan_sosial * 
+                             $matrix[6]->keahlian_komputer * $matrix[6]->kepribadian * $matrix[6]->mempunyai_hp), (1/7));
+
+        $sumEigen = $eigenPendidikan + $eigenPenyakitBerat + $eigenPengetahuanKesehatan + $eigenKeaktifanSosial +
+                    $eigenKeahlianKomputer + $eigenKepribadian + $eigenMempunyaiHp;
+
+        $bobotPrioritasPendidikan = $eigenPendidikan / $sumEigen;
+        $bobotPrioritasPenyakitBerat = $eigenPenyakitBerat / $sumEigen;
+        $bobotPrioritasPengetahuanKesehatan = $eigenPengetahuanKesehatan / $sumEigen;
+        $bobotPrioritasKeaktifanSosial = $eigenKeaktifanSosial / $sumEigen;
+        $bobotPrioritasKeahlianKomputer = $eigenKeahlianKomputer / $sumEigen;
+        $bobotPrioritasKepribadian = $eigenKepribadian / $sumEigen;
+        $bobotPrioritasMempunyaiHp = $eigenMempunyaiHp / $sumEigen;
+        
+        $sumBobotPrioritas = $bobotPrioritasPendidikan
+                            + $bobotPrioritasPenyakitBerat
+                            + $bobotPrioritasPengetahuanKesehatan
+                            + $bobotPrioritasKeaktifanSosial
+                            + $bobotPrioritasKeahlianKomputer
+                            + $bobotPrioritasKepribadian
+                            + $bobotPrioritasMempunyaiHp;
+            
+        //menghitung bobot sintesa dan eigen
+        
+        $sintesaPendidikan = (($matrix[0]->pendidikan / $sumPendidikan) + ($matrix[0]->penyakit_berat / $sumPenyakitBerat) 
+        + ($matrix[0]->pengetahuan_kesehatan / $sumPengetahuanKesehatan) + ($matrix[0]->keaktifan_sosial / $sumKeaktifanSosial) 
+        + ($matrix[0]->keahlian_komputer / $sumKeahlianKomputer) + ($matrix[0]->kepribadian / $sumKepribadian) + ($matrix[0]->mempunyai_hp / $sumMempunyaiHp));
+                            
+        $sintesaKeaktifanSosial = (($matrix[1]->pendidikan / $sumPendidikan) + ($matrix[1]->penyakit_berat / $sumPenyakitBerat) 
+        + ($matrix[1]->pengetahuan_kesehatan / $sumPengetahuanKesehatan) + ($matrix[1]->keaktifan_sosial / $sumKeaktifanSosial) 
+        + ($matrix[1]->keahlian_komputer / $sumKeahlianKomputer) + ($matrix[1]->kepribadian / $sumKepribadian) + ($matrix[1]->mempunyai_hp / $sumMempunyaiHp));
+
+        $sintesaKepribadian = (($matrix[2]->pendidikan / $sumPendidikan) + ($matrix[2]->penyakit_berat / $sumPenyakitBerat) 
+        + ($matrix[2]->pengetahuan_kesehatan / $sumPengetahuanKesehatan) + ($matrix[2]->keaktifan_sosial / $sumKeaktifanSosial) 
+        + ($matrix[2]->keahlian_komputer / $sumKeahlianKomputer) + ($matrix[2]->kepribadian / $sumKepribadian) + ($matrix[2]->mempunyai_hp / $sumMempunyaiHp));
+
+        $sintesaPenyakitBerat = (($matrix[3]->pendidikan / $sumPendidikan) + ($matrix[3]->penyakit_berat / $sumPenyakitBerat) 
+        + ($matrix[3]->pengetahuan_kesehatan / $sumPengetahuanKesehatan) + ($matrix[3]->keaktifan_sosial / $sumKeaktifanSosial) 
+        + ($matrix[3]->keahlian_komputer / $sumKeahlianKomputer) + ($matrix[3]->kepribadian / $sumKepribadian) + ($matrix[3]->mempunyai_hp / $sumMempunyaiHp));
+        
+        $sintesaPengetahuanKesehatan = (($matrix[4]->pendidikan / $sumPendidikan) + ($matrix[4]->penyakit_berat / $sumPenyakitBerat) 
+        + ($matrix[4]->pengetahuan_kesehatan / $sumPengetahuanKesehatan) + ($matrix[4]->keaktifan_sosial / $sumKeaktifanSosial) 
+        + ($matrix[4]->keahlian_komputer / $sumKeahlianKomputer) + ($matrix[4]->kepribadian / $sumKepribadian) + ($matrix[4]->mempunyai_hp / $sumMempunyaiHp));
+
+        $sintesaKeahlianKomputer = (($matrix[5]->pendidikan / $sumPendidikan) + ($matrix[5]->penyakit_berat / $sumPenyakitBerat) 
+        + ($matrix[5]->pengetahuan_kesehatan / $sumPengetahuanKesehatan) + ($matrix[5]->keaktifan_sosial / $sumKeaktifanSosial) 
+        + ($matrix[5]->keahlian_komputer / $sumKeahlianKomputer) + ($matrix[5]->kepribadian / $sumKepribadian) + ($matrix[5]->mempunyai_hp / $sumMempunyaiHp));
+        
+        $sintesaMempunyaiHp = (   ($matrix[6]->pendidikan / $sumPendidikan) 
+                                + ($matrix[6]->penyakit_berat / $sumPenyakitBerat) 
+                                + ($matrix[6]->pengetahuan_kesehatan / $sumPengetahuanKesehatan) 
+                                + ($matrix[6]->keaktifan_sosial / $sumKeaktifanSosial) 
+                                + ($matrix[6]->keahlian_komputer / $sumKeahlianKomputer) 
+                                + ($matrix[6]->kepribadian / $sumKepribadian) 
+                                + ($matrix[6]->mempunyai_hp / $sumMempunyaiHp));
+
+        //menghitung eigen makxs
+        $eigenMaxPendidikan = $sintesaPendidikan / $bobotPrioritasPendidikan;
+        $eigenMaxPenyakitBerat = $sintesaPenyakitBerat / $bobotPrioritasPenyakitBerat;
+        $eigenMaxPengetahuanKesehatan = $sintesaPengetahuanKesehatan / $bobotPrioritasPengetahuanKesehatan;
+        $eigenMaxKeaktifanSosial = $sintesaKeaktifanSosial / $bobotPrioritasKeaktifanSosial;
+        $eigenMaxKeahlianKomputer = $sintesaKeahlianKomputer / $bobotPrioritasKeahlianKomputer;
+        $eigenMaxKepribadian = $sintesaKepribadian / $bobotPrioritasKepribadian;
+        $eigenMaxMempunyaiHp = $sintesaMempunyaiHp / $bobotPrioritasMempunyaiHp;
+
+        $sumEigenMax = $eigenMaxPendidikan + $eigenMaxPenyakitBerat + $eigenMaxPengetahuanKesehatan + $eigenMaxKeaktifanSosial
+                        + $eigenMaxKeahlianKomputer + $eigenMaxKepribadian + $eigenMaxMempunyaiHp;
+
+        $lambdaMax = $sumEigenMax / 7;
+        $newCI = ($lambdaMax - 7) / 7 ;
+        $indexRatio = 1.32;
+        $newCR = $newCI / $indexRatio;
+
+        $matrix[0]->avg = $sintesaPendidikan;
+        $matrix[1]->avg = $sintesaKeaktifanSosial;
+        $matrix[2]->avg = $sintesaKepribadian;
+        $matrix[3]->avg = $sintesaPenyakitBerat;
+        $matrix[4]->avg = $sintesaPengetahuanKesehatan;
+        $matrix[5]->avg = $sintesaKeahlianKomputer;
+        $matrix[6]->avg = $sintesaMempunyaiHp;
+
         $res = (object) array(
-            'status' => $status,
-            'lambda' => $lambda,
-            'ci'     => $ci,
-            'cr'     => $cr,
-            'matrix' => $tempW,
+            'status' => ($newCR < 0.1) ? 'KONSISTEN' : 'TIDAK KONSISTEN',
+            'lambda' => $lambdaMax,
+            'ci'     => $newCI,
+            'cr'     => $newCR,
+            'matrix' => $matrix,
         );
         return $res;
     }
@@ -319,49 +352,129 @@ class RangkingController extends Controller
             $matrix[$i]->mempunyai_hp = $this->convertToScalar('mempunyai_hp', $matrix[$i]->mempunyai_hp);
         }
 
-        $sumPendidikan = 0;
-        $sumPenyakitBerat = 0;
-        $sumPengetahuanKesehatan = 0;
-        $sumKeaktifanSosial = 0;
-        $sumKeahlianKomputer = 0;
-        $sumKepribadian = 0;
-        $sumMempunyaiHp = 0;
+        // echo '<table border="1">';
+        // foreach ($matrix as $key) {
+        //         echo "<tr>
+        //             <td width='200px'><center>".$key->kader->nama."</center></td>
+        //             <td width='100px'><center>$key->pendidikan</center></td>
+        //             <td width='100px'><center>$key->keaktifan_sosial</center></td>
+        //             <td width='100px'><center>$key->kepribadian</center></td>
+        //             <td width='100px'><center>$key->penyakit_berat</center></td>
+        //             <td width='100px'><center>$key->pengetahuan_kesehatan</center></td>
+        //             <td width='100px'><center>$key->keahlian_komputer</center></td>
+        //             <td width='100px'><center>$key->mempunyai_hp</center></td>
+        //         </tr>";
+        // }
+        // echo '</table>';
 
-        foreach ($matrix as $key) {
-            $sumPendidikan += pow($key->pendidikan, 2);
-            $sumPenyakitBerat += pow($key->penyakit_berat, 2);
-            $sumPengetahuanKesehatan += pow($key->pengetahuan_kesehatan, 2);
-            $sumKeaktifanSosial += pow($key->keaktifan_sosial, 2);
-            $sumKeahlianKomputer += pow($key->keahlian_komputer, 2);
-            $sumKepribadian += pow($key->kepribadian, 2);
-            $sumMempunyaiHp += pow($key->mempunyai_hp, 2);
+        //mencari pembagi
+        $pembagi = ['pendidikan' => 0, 'penyakit_berat' => 0, 'pengetahuan_kesehatan' => 0, 'keaktifan_sosial' => 0, 
+                    'keahlian_komputer' => 0, 'kepribadian' => 0, 'mempunyai_hp' => 0];
+
+        for($i = 0; $i < count($matrix); $i++) {
+            $pembagi['pendidikan'] += pow($matrix[$i]->pendidikan, 2);    
+            $pembagi['keaktifan_sosial'] += pow($matrix[$i]->keaktifan_sosial, 2);    
+            $pembagi['kepribadian'] += pow($matrix[$i]->kepribadian, 2);    
+            $pembagi['penyakit_berat'] += pow($matrix[$i]->penyakit_berat, 2);    
+            $pembagi['pengetahuan_kesehatan'] += pow($matrix[$i]->pengetahuan_kesehatan, 2);    
+            $pembagi['keahlian_komputer'] += pow($matrix[$i]->keahlian_komputer, 2);    
+            $pembagi['mempunyai_hp'] += pow($matrix[$i]->mempunyai_hp, 2);
+
+            if($i==(count($matrix)-1)) {
+                $pembagi['pendidikan'] = sqrt($pembagi['pendidikan']);    
+                $pembagi['keaktifan_sosial'] = sqrt($pembagi['keaktifan_sosial']);    
+                $pembagi['kepribadian'] = sqrt($pembagi['kepribadian']);    
+                $pembagi['penyakit_berat'] = sqrt($pembagi['penyakit_berat']);    
+                $pembagi['pengetahuan_kesehatan'] = sqrt($pembagi['pengetahuan_kesehatan']);    
+                $pembagi['keahlian_komputer'] = sqrt($pembagi['keahlian_komputer']);    
+                $pembagi['mempunyai_hp'] = sqrt($pembagi['mempunyai_hp']);
+            }
         }
 
+        //menghitung matrix ternormalisasi dan bobot ternormalisasi        
         $matrixNormalisasi = array();
+        $bobotNormalisasi = array();
 
         $i = 0;
         foreach ($matrix as $key) {
-            // $temp = new Temp_Normalisasi;
             $matrixNormalisasi[$i] = new \stdClass();
-            $matrixNormalisasi[$i]->kader_id = $key->kader_id;
-            $matrixNormalisasi[$i]->pendidikan = (($key->pendidikan / sqrt($sumPendidikan) * $bobot[0]));
-            $matrixNormalisasi[$i]->penyakit_berat = (($key->penyakit_berat / sqrt($sumPenyakitBerat) * $bobot[1]));
-            $matrixNormalisasi[$i]->pengetahuan_kesehatan = (($key->pengetahuan_kesehatan / sqrt($sumPengetahuanKesehatan) * $bobot[2]));
-            $matrixNormalisasi[$i]->keaktifan_sosial = (($key->keaktifan_sosial / sqrt( $sumKeaktifanSosial) * $bobot[3]));
-            $matrixNormalisasi[$i]->keahlian_komputer = (( $key->keahlian_komputer / sqrt($sumKeahlianKomputer) * $bobot[4]));
-            $matrixNormalisasi[$i]->kepribadian = (($key->kepribadian / sqrt($sumKepribadian) * $bobot[5]));
-            $matrixNormalisasi[$i]->mempunyai_hp = (($key->mempunyai_hp / sqrt($sumMempunyaiHp) * $bobot[6]));
+            $matrixNormalisasi[$i]->kader_id = $key->kader_id; //jangan lupa diganti
+            $matrixNormalisasi[$i]->pendidikan = (($key->pendidikan / $pembagi['pendidikan']));
+            $matrixNormalisasi[$i]->keaktifan_sosial = (($key->keaktifan_sosial / $pembagi['keaktifan_sosial']));
+            $matrixNormalisasi[$i]->penyakit_berat = (($key->penyakit_berat / $pembagi['penyakit_berat']));
+            $matrixNormalisasi[$i]->pengetahuan_kesehatan = (($key->pengetahuan_kesehatan / $pembagi['pengetahuan_kesehatan']));
+            $matrixNormalisasi[$i]->keahlian_komputer = (( $key->keahlian_komputer / $pembagi['keahlian_komputer']));
+            $matrixNormalisasi[$i]->kepribadian = (($key->kepribadian / $pembagi['kepribadian']));
+            $matrixNormalisasi[$i]->mempunyai_hp = (($key->mempunyai_hp / $pembagi['mempunyai_hp']));
+
+            $bobotNormalisasi[$i] = new \stdClass();
+            $bobotNormalisasi[$i]->kader_id = $matrixNormalisasi[$i]->kader_id;
+            $bobotNormalisasi[$i]->pendidikan = (($matrixNormalisasi[$i]->pendidikan * $bobot[0]));
+            $bobotNormalisasi[$i]->keaktifan_sosial = (($matrixNormalisasi[$i]->keaktifan_sosial * $bobot[1]));
+            $bobotNormalisasi[$i]->kepribadian = (($matrixNormalisasi[$i]->kepribadian * $bobot[2]));
+            $bobotNormalisasi[$i]->penyakit_berat = (($matrixNormalisasi[$i]->penyakit_berat * $bobot[3]));
+            $bobotNormalisasi[$i]->pengetahuan_kesehatan = (($matrixNormalisasi[$i]->pengetahuan_kesehatan * $bobot[4]));
+            $bobotNormalisasi[$i]->keahlian_komputer = (($matrixNormalisasi[$i]->keahlian_komputer * $bobot[5]));
+            $bobotNormalisasi[$i]->mempunyai_hp = (($matrixNormalisasi[$i]->mempunyai_hp * $bobot[6]));
+
             $i++;
-            // $temp->save();
         }
 
-        // echo '<hr/><h1>MATRIX NORMALISASI TOPSIS</h1>';
-        // foreach ($matrixNormalisasi as $key) {
-        //     echo json_encode($key);
+
+        // echo '<h1>BOBOT AHP</h1><table border="1">';
+        // for($o=0; $o < 1; $o++) {
+        //     echo "
+        //     <tr>
+        //         <td width='200px'><center>Pendidikan</center></td>
+        //         <td width='200px'><center>".$bobot[0]."</center></td></tr><tr>
+        //         <td width='100px'><center>Keaktifan Sosial</center></td>
+        //         <td width='100px'><center>".$bobot[1]."</center></td></tr><tr>
+        //         <td width='100px'><center>Kepribadian</center></td>
+        //         <td width='100px'><center>".$bobot[2]."</center></td></tr><tr>
+        //         <td width='100px'><center>Penyakit Berat</center></td>
+        //         <td width='100px'><center>".$bobot[3]."</center></td></tr><tr>
+        //         <td width='100px'><center>Pengetahuan Kesehatan</center></td>
+        //         <td width='100px'><center>".$bobot[4]."</center></td></tr><tr>
+        //         <td width='100px'><center>Keahlian Komputer</center></td>
+        //         <td width='100px'><center>".$bobot[5]."</center></td></tr><tr>
+        //         <td width='100px'><center>Mempunyai HP</center></td>
+        //         <td width='100px'><center>".$bobot[6]."</center></td></tr>";
         // }
+        // echo '</table>';
+        
+        // echo '<h1>Matrix Normalisasi</h1><table border="1">';
+        // foreach ($matrixNormalisasi as $key) {
+        //         echo "<tr>
+        //             <td width='200px'><center>".$key->kader_id."</center></td>
+        //             <td width='100px'><center>$key->pendidikan</center></td>
+        //             <td width='100px'><center>$key->keaktifan_sosial</center></td>
+        //             <td width='100px'><center>$key->kepribadian</center></td>
+        //             <td width='100px'><center>$key->penyakit_berat</center></td>
+        //             <td width='100px'><center>$key->pengetahuan_kesehatan</center></td>
+        //             <td width='100px'><center>$key->keahlian_komputer</center></td>
+        //             <td width='100px'><center>$key->mempunyai_hp</center></td>
+        //         </tr>";
+        // }
+        // echo '</table>';
+
+        // echo '<h1>Bobot Normalisasi</h1><table border="1">';
+        // foreach ($bobotNormalisasi as $key) {
+        //         echo "<tr>
+        //             <td width='200px'><center>".$key->kader_id."</center></td>
+        //             <td width='100px'><center>$key->pendidikan</center></td>
+        //             <td width='100px'><center>$key->keaktifan_sosial</center></td>
+        //             <td width='100px'><center>$key->kepribadian</center></td>
+        //             <td width='100px'><center>$key->penyakit_berat</center></td>
+        //             <td width='100px'><center>$key->pengetahuan_kesehatan</center></td>
+        //             <td width='100px'><center>$key->keahlian_komputer</center></td>
+        //             <td width='100px'><center>$key->mempunyai_hp</center></td>
+        //         </tr>";
+        // }
+        // echo '</table>';
+
 
         //menghitung solusi ideal positif dan solusi ideal negatif
-        $data = $matrixNormalisasi;
+        $data = $bobotNormalisasi;
         $mKaderId = [];
         $mPendidikan = [];
         $mPenyakitBerat = [];
@@ -375,72 +488,98 @@ class RangkingController extends Controller
         foreach ($data as $key) {
             $mKaderId[$i] = $key->kader_id;
             $mPendidikan[$i] = $key->pendidikan;
+            $mKeaktifanSosial[$i] = $key->keaktifan_sosial;
+            $mKepribadian[$i] = $key->kepribadian;
             $mPenyakitBerat[$i] = $key->penyakit_berat;
             $mPengetahuanKesehatan[$i] = $key->pengetahuan_kesehatan;
-            $mKeaktifanSosial[$i] = $key->keaktifan_sosial;
             $mKeahlianKomputer[$i] = $key->keahlian_komputer;
-            $mKepribadian[$i] = $key->kepribadian;
             $mMempunyaiHp[$i] = $key->mempunyai_hp;
             $i++;
         }
 
         // matrix ideal positif
         $y1Positif = max($mPendidikan);
-        $y2Positif = max($mPenyakitBerat);
-        $y3Positif = max($mPengetahuanKesehatan);
-        $y4Positif = max($mKeaktifanSosial);
-        $y5Positif = max($mKeahlianKomputer);
-        $y6Positif = max($mKepribadian);
+        $y2Positif = max($mKeaktifanSosial);
+        $y3Positif = max($mKepribadian);
+        $y4Positif = max($mPenyakitBerat);
+        $y5Positif = max($mPengetahuanKesehatan);
+        $y6Positif = max($mKeahlianKomputer);
         $y7Positif = max($mMempunyaiHp);
 
         // matrix ideal negatif
         $y1Negatif = min($mPendidikan);
-        $y2Negatif = min($mPenyakitBerat);
-        $y3Negatif = min($mPengetahuanKesehatan);
-        $y4Negatif = min($mKeaktifanSosial);
-        $y5Negatif = min($mKeahlianKomputer);
-        $y6Negatif = min($mKepribadian);
+        $y2Negatif = min($mKeaktifanSosial);
+        $y3Negatif = min($mKepribadian);
+        $y4Negatif = min($mPenyakitBerat);
+        $y5Negatif = min($mPengetahuanKesehatan);
+        $y6Negatif = min($mKeahlianKomputer);
         $y7Negatif = min($mMempunyaiHp);
 
-        //perhitungan ideal positif
+        // echo '<h1>A+ dan A-</h1><table border="1">';
+        // echo "<tr>
+        //     <td width='200px'><center>A+</center></td>";
+        //     for ($i=1; $i < 8; $i++) { 
+        //         echo "<td width='100px'><center>".${'y'.$i.'Positif'}."</center></td>";
+        //     }
+        // echo "<tr>
+        //     <td width='200px'><center>A-</center></td>";
+        // for ($i=1; $i < 8; $i++) { 
+        //     echo "<td width='100px'><center>".${'y'.$i.'Negatif'}."</center></td>";
+        // }
+        // echo '</table>';
+
+        //perhitungan solusi ideal
         $dPositif = array();
         $dNegatif = array();
 
+        //perhitungan ideal positif
         for ($i = 0; $i < count($mKaderId); $i++) {
-            // $dPositif = new Temp_D_Pos;
             $dPositif[$i] = new \stdClass();
             $dPositif[$i]->kader_id = $mKaderId[$i];
             $dPositif[$i]->dPositif = sqrt(
                 pow(($y1Positif - $mPendidikan[$i]), 2) +
-                pow(($y2Positif - $mPenyakitBerat[$i]), 2) +
-                pow(($y3Positif - $mPengetahuanKesehatan[$i]), 2) +
-                pow(($y4Positif - $mKeaktifanSosial[$i]), 2) +
-                pow(($y5Positif - $mKeahlianKomputer[$i]), 2) +
-                pow(($y6Positif - $mKepribadian[$i]), 2) +
+                pow(($y2Positif - $mKeaktifanSosial[$i]), 2) +
+                pow(($y3Positif - $mKepribadian[$i]), 2) +
+                pow(($y4Positif - $mPenyakitBerat[$i]), 2) +
+                pow(($y5Positif - $mPengetahuanKesehatan[$i]), 2) +
+                pow(($y6Positif - $mKeahlianKomputer[$i]), 2) +
                 pow(($y7Positif - $mMempunyaiHp[$i]), 2)
             );
-            // $dPositif->save();
         }
+
         //perhitungan ideal negatif
         for ($i = 0; $i < count($mKaderId); $i++) {
-            // $dNegatif = new Temp_D_Neg;
             $dNegatif[$i] = new \stdClass();
             $dNegatif[$i]->kader_id = $mKaderId[$i];
             $dNegatif[$i]->dNegatif = sqrt(
                 pow(($mPendidikan[$i] - $y1Negatif), 2) +
-                pow(($mPenyakitBerat[$i] - $y2Negatif), 2) +
-                pow(($mPengetahuanKesehatan[$i] - $y3Negatif), 2) +
-                pow(($mKeaktifanSosial[$i] - $y4Negatif), 2) +
-                pow(($mKeahlianKomputer[$i] - $y5Negatif), 2) +
-                pow(($mKepribadian[$i] - $y6Negatif), 2) +
+                pow(($mKeaktifanSosial[$i] - $y2Negatif), 2) +
+                pow(($mKepribadian[$i] - $y3Negatif), 2) +
+                pow(($mPenyakitBerat[$i] - $y4Negatif), 2) +
+                pow(($mPengetahuanKesehatan[$i] - $y5Negatif), 2) +
+                pow(($mKeahlianKomputer[$i] - $y6Negatif), 2) +
                 pow(($mMempunyaiHp[$i] - $y7Negatif), 2)
             );
-            // $dNegatif->save();
         }
 
-        // echo '<hr/><h1>Solusi Ideal</h1>';
-        // echo 'POSITIF<br/>';print_r($dPositif);
-        // echo '<br/>NEGATIF<br/>';print_r($dNegatif);
+        // echo '<h1>D+</h1><table border="1">';
+        // foreach ($dPositif as $key) {
+        //         echo "<tr>
+        //             <td width='200px'><center>".$key->kader_id."</center></td>
+        //             <td width='100px'><center>$key->dPositif</center></td>
+        //         </tr>";
+        // }
+        // echo '</table>';
+
+        
+        // echo '<h1>D-</h1><table border="1">';
+        // foreach ($dNegatif as $key) {
+        //         echo "<tr>
+        //             <td width='200px'><center>".$key->kader_id."</center></td>
+        //             <td width='100px'><center>$key->dNegatif</center></td>
+        //         </tr>";
+        // }
+        // echo '</table>';
 
         //hitung nilai preferensi
         $positif = $dPositif;

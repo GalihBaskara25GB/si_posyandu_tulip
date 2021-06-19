@@ -44,6 +44,7 @@ Route::group(['middleware' => 'auth'], function () {
         //Kaders Route
         Route::get('/kaders/print_pdf', [KaderController::class, 'generatePdf']);
         Route::resource('kaders', KaderController::class);
+        Route::post('kaders/import', [KaderController::class, 'import'])->name('kaders.import');
         
         //Users Route
         Route::get('/users/print_pdf', [UserController::class, 'generatePdf']);

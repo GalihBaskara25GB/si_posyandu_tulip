@@ -9,6 +9,18 @@
   @include('partials.quickaction')
   @include('modals.kader')
 
+  <!-- <div class="row">
+    <div class="col-12">
+    <a href="" button type="buttons" class="btn btn-success">Import Exel</a> -->
+        <!-- <form action="{{ route('kaders.import') }}" method="POST" enctype="multipart/form-data"> -->
+        <!-- @csrf -->
+        <!-- <label for="file">Pilih File Excel</label> -->
+        <!-- <input type="file" class="form-control" id="file" name="file"> -->
+        <!-- <button type="submit" class="btn btn-outline-info">Import</button> -->
+        <!-- </form> -->
+    <!-- </div> -->
+  <!-- </div> -->
+  
   <div class="row">
     <div class="col-12 grid-margin">
       <div class="card">
@@ -64,6 +76,7 @@
                       <option value="sd">SD</option>
                       <option value="smp">SMP</option>
                       <option value="sma">SMA</option>
+                      <option value="d3">D3</option>
                       <option value="strata-1">Strata-1</option>
                     </select>
                   </div>

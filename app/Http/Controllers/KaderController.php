@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Kader;
 use App\Http\Requests\KaderRequest;
 
+use App\Imports\KaderImport;
+use Maatwebsite\Excel\Facades\Excel;
+
 use PDF;
 
 class KaderController extends Controller
@@ -76,4 +79,11 @@ class KaderController extends Controller
         $pdf = PDF::loadview('laporan.kader', ['kaders' => $kaders]);
         return $pdf->download('laporan-kader');
     } 
+
+    public function import() 
+    {
+        Excel::import(new KaderImport, request()->file('file'));
+             
+        return back();
+    }
 }

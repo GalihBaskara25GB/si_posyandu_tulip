@@ -67,10 +67,11 @@
                   <label class="col-sm-3 col-form-label">Pendidikan Terakhir</label>
                   <div class="col-sm-9">
                     <select name="pendidikan" class="form-control text-dark" required>
-                      <option value="sd" {{ ($kriteria->pendidikan == 'sd') ? 'selected' : '' }}>SD</option>
-                      <option value="sma" {{ ($kriteria->pendidikan == 'smp') ? 'selected' : '' }}>SMA</option>
-                      <option value="smp" {{ ($kriteria->pendidikan == 'sma') ? 'selected' : '' }}>SMP</option>
-                      <option value="strata-1" {{ ($kriteria->pendidikan == 'strata-1') ? 'selected' : '' }}>Strata-1</option>
+                      <option value="sd" {{ (strtolower($kriteria->pendidikan) == 'sd') ? 'selected' : '' }}>SD</option>
+                      <option value="smp" {{ (strtolower($kriteria->pendidikan) == 'smp') ? 'selected' : '' }}>SMP</option>
+                      <option value="sma" {{ (strtolower($kriteria->pendidikan) == 'sma') ? 'selected' : '' }}>SMA</option>
+                      <option value="d3" {{ (strtolower($kriteria->pendidikan) == 'd3') ? 'selected' : '' }}>D3</option>
+                      <option value="strata-1" {{ (strtolower($kriteria->pendidikan) == 'strata-1') ? 'selected' : '' }}>Strata-1</option>
                     </select>
                   </div>
                 </div>
@@ -80,9 +81,9 @@
                   <label class="col-sm-3 col-form-label">Pengetahuan Dasar Kesehatan</label>
                   <div class="col-sm-9">
                     <select name="pengetahuan_kesehatan" class="form-control text-dark" required>
-                      <option value="baik" {{ ($kriteria->pengetahuan_kesehatan == 'baik') ? 'selected' : '' }}>Baik</option>
-                      <option value="cukup" {{ ($kriteria->pengetahuan_kesehatan == 'cukup') ? 'selected' : '' }}>Cukup</option>
-                      <option value="kurang" {{ ($kriteria->pengetahuan_kesehatan == 'kurang') ? 'selected' : '' }}>Kurang</option>
+                      <option value="baik" {{ (strtolower($kriteria->pengetahuan_kesehatan) == 'baik') ? 'selected' : '' }}>Baik</option>
+                      <option value="cukup" {{ (strtolower($kriteria->pengetahuan_kesehatan) == 'cukup') ? 'selected' : '' }}>Cukup</option>
+                      <option value="kurang" {{ (strtolower($kriteria->pengetahuan_kesehatan) == 'kurang') ? 'selected' : '' }}>Kurang</option>
                     </select>
                   </div>
                 </div>
@@ -95,9 +96,9 @@
                   <label class="col-sm-3 col-form-label">Keaktifan Sosial</label>
                   <div class="col-sm-9">
                     <select name="keaktifan_sosial" class="form-control text-dark" required>
-                      <option value="baik" {{ ($kriteria->keaktifan_sosial == 'baik') ? 'selected' : '' }}>Baik</option>
-                      <option value="cukup" {{ ($kriteria->keaktifan_sosial == 'cukup') ? 'selected' : '' }}>Cukup</option>
-                      <option value="kurang" {{ ($kriteria->keaktifan_sosial == 'kurang') ? 'selected' : '' }}>Kurang</option>
+                      <option value="baik" {{ (strtolower($kriteria->keaktifan_sosial) == 'baik') ? 'selected' : '' }}>Baik</option>
+                      <option value="cukup" {{ (strtolower($kriteria->keaktifan_sosial) == 'cukup') ? 'selected' : '' }}>Cukup</option>
+                      <option value="kurang" {{ (strtolower($kriteria->keaktifan_sosial) == 'kurang') ? 'selected' : '' }}>Kurang</option>
                     </select>
                   </div>
                 </div>
@@ -121,9 +122,9 @@
                   <label class="col-sm-3 col-form-label">Nilai Kepribadian</label>
                   <div class="col-sm-9">
                     <select name="kepribadian" class="form-control text-dark" required>
-                      <option value="baik" {{ ($kriteria->kepribadian == 'baik') ? 'selected' : '' }}>Baik</option>
-                      <option value="cukup" {{ ($kriteria->kepribadian == 'cukup') ? 'selected' : '' }}>Cukup</option>
-                      <option value="kurang" {{ ($kriteria->kepribadian == 'kurang') ? 'selected' : '' }}>Kurang</option>
+                      <option value="baik" {{ (strtolower($kriteria->kepribadian) == 'baik') ? 'selected' : '' }}>Baik</option>
+                      <option value="cukup" {{ (strtolower($kriteria->kepribadian) == 'cukup') ? 'selected' : '' }}>Cukup</option>
+                      <option value="kurang" {{ (strtolower($kriteria->kepribadian) == 'kurang') ? 'selected' : '' }}>Kurang</option>
                     </select>
                   </div>
                 </div>
