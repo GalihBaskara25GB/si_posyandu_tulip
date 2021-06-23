@@ -8,6 +8,16 @@
 
   @include('rangking.quickbar-perhitungan')
  
+  <div class="row collapse" id="collapseExample">
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <?php echo $topsis->resultView ?>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <div class="row">
     <div class="col-md-12 grid-margin stretch-card">
       <div class="card">
@@ -145,5 +155,6 @@
       </div>
     </div>
   </div>
+  
 @endsection
       

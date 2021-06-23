@@ -127,80 +127,81 @@ class RangkingController extends Controller
     {
         // $matrix = Kriteria::all();
         //Matriks Perbandingan Berpasangan
+        $resultView = '';
         $matrix = array(
             '0' => (object) array(
                 'pendidikan' => 1,
-                'penyakit_berat' => 5,
-                'pengetahuan_kesehatan' => 0.2,
-                'keaktifan_sosial' => 0.1111,
-                'keahlian_komputer' => 7,
-                'kepribadian' => 0.1429,
+                'keaktifan_sosial' => 5,
+                'kepribadian' => 0.2,
+                'penyakit_berat' => 0.1111,
+                'pengetahuan_kesehatan' => 7,
+                'keahlian_komputer' => 0.1429,
                 'mempunyai_hp' => 1,
                 'avg' => null,
                 'matrix_aw' => null
             ),
             '1' => (object) array(
                 'pendidikan' => 0.2,
-                'penyakit_berat' => 1,
+                'keaktifan_sosial' => 1,
+                'kepribadian' => 5,
+                'penyakit_berat' => 0.1429,
                 'pengetahuan_kesehatan' => 5,
-                'keaktifan_sosial' => 0.1429,
-                'keahlian_komputer' => 5,
-                'kepribadian' => 3,
+                'keahlian_komputer' => 3,
                 'mempunyai_hp' => 5,
                 'avg' => null,
                 'matrix_aw' => null
             ),
             '2' => (object) array(
                 'pendidikan' => 5,
-                'penyakit_berat' => 0.2,
-                'pengetahuan_kesehatan' => 1,
-                'keaktifan_sosial' => 0.1429,
-                'keahlian_komputer' => 5,
-                'kepribadian' => 0.1429,
+                'keaktifan_sosial' => 0.2,
+                'kepribadian' => 1,
+                'penyakit_berat' => 0.1429,
+                'pengetahuan_kesehatan' => 5,
+                'keahlian_komputer' => 0.1429,
                 'mempunyai_hp' => 5,
                 'avg' => null,
                 'matrix_aw' => null
             ),
             '3' => (object) array(
                 'pendidikan' => 9,
-                'penyakit_berat' => 7,
+                'keaktifan_sosial' => 7,
+                'kepribadian' => 7,
+                'penyakit_berat' => 1,
                 'pengetahuan_kesehatan' => 7,
-                'keaktifan_sosial' => 1,
-                'keahlian_komputer' => 7,
-                'kepribadian' => 0.2,
+                'keahlian_komputer' => 0.2,
                 'mempunyai_hp' => 3,
                 'avg' => null,
                 'matrix_aw' => null
             ),
             '4' => (object) array(
                 'pendidikan' => 0.1429,
-                'penyakit_berat' => 0.2,
-                'pengetahuan_kesehatan' => 0.2,
-                'keaktifan_sosial' => 0.1429,
-                'keahlian_komputer' => 1,
-                'kepribadian' => 0.1429,
+                'keaktifan_sosial' => 0.2,
+                'kepribadian' => 0.2,
+                'penyakit_berat' => 0.1429,
+                'pengetahuan_kesehatan' => 1,
+                'keahlian_komputer' => 0.1429,
                 'mempunyai_hp' => 0.1429,
                 'avg' => null,
                 'matrix_aw' => null
             ),
             '5' => (object) array(
                 'pendidikan' => 7,
-                'penyakit_berat' => 0.3333,
+                'keaktifan_sosial' => 0.3333,
+                'kepribadian' => 7,
+                'penyakit_berat' => 5,
                 'pengetahuan_kesehatan' => 7,
-                'keaktifan_sosial' => 5,
-                'keahlian_komputer' => 7,
-                'kepribadian' => 1,
+                'keahlian_komputer' => 1,
                 'mempunyai_hp' => 7,
                 'avg' => null,
                 'matrix_aw' => null
             ),
             '6' => (object) array(
                 'pendidikan' => 1,
-                'penyakit_berat' => 0.2,
-                'pengetahuan_kesehatan' => 1,
-                'keaktifan_sosial' => 0.3333,
-                'keahlian_komputer' => 7,
-                'kepribadian' => 0.1429,
+                'keaktifan_sosial' => 0.2,
+                'kepribadian' => 1,
+                'penyakit_berat' => 0.3333,
+                'pengetahuan_kesehatan' => 7,
+                'keahlian_komputer' => 0.1429,
                 'mempunyai_hp' => 1,
                 'avg' => null,
                 'matrix_aw' => null
@@ -224,8 +225,6 @@ class RangkingController extends Controller
             $sumKepribadian += $key->kepribadian;
             $sumMempunyaiHp += $key->mempunyai_hp;
         }
-
-        // dd($sumPendidikan);
 
         //mencari eigen
         $eigenPendidikan = pow(($matrix[0]->pendidikan * $matrix[0]->penyakit_berat * $matrix[0]->pengetahuan_kesehatan * $matrix[0]->keaktifan_sosial * 
@@ -327,12 +326,87 @@ class RangkingController extends Controller
         $matrix[5]->avg = $sintesaKeahlianKomputer;
         $matrix[6]->avg = $sintesaMempunyaiHp;
 
+        $arrViewKriteria = ['Pendidikan','KeaktifanSosial','Kepribadian','PenyakitBerat','PengetahuanKesehatan','KeahlianKomputer','MempunyaiHp'];
+        $resultView .= '<h3>AHP</h3><h4>Matrix Perbandingan Berpasangan</h4>';
+        $resultView .= '<table class="table table-responsive table-striped mb-3">';
+        $resultView .= "<thead><tr>
+                    <th><center></center></th>
+                    <th><center>Pendidikan</center></th>
+                    <th><center>Penyakit Berat</center></th>
+                    <th><center>Pengetahuan Kesehatan</center></th>
+                    <th><center>Keaktifan Sosial</center></th>
+                    <th><center>Keahlian Komputer</center></th>
+                    <th><center>Kepribadian</center></th>
+                    <th><center>Mempunyai HP</center></th>
+                    <th><center>Eigen Value</center></th>
+                    <th><center>Bobot Prioritas</center></th>
+                    <th><center>Bobot Sintesa</center></th>
+                    <th><center>Eigen Max</center></th>
+                </tr></thead><tbody>";
+        $i=0;
+        foreach ($matrix as $key) {
+                $resultView .= "<tr>";
+                if($i==0) $resultView .= "<td><center>Pendidikan</center></td>";
+                if($i==1) $resultView .= "<td><center>Penyakit Berat</center></td>";
+                if($i==2) $resultView .= "<td><center>Pengetahuan Kesehatan</center></td>";
+                if($i==3) $resultView .= "<td><center>Keaktifan Sosial</center></td>";
+                if($i==4) $resultView .= "<td><center>Keahlian Komputer</center></td>";
+                if($i==5) $resultView .= "<td><center>Kepribadian</center></td>";
+                if($i==6) $resultView .= "<td><center>Mempunyai HP</center></td>";
+                $resultView .= "
+                    <td><center>$key->pendidikan</center></td>
+                    <td><center>$key->penyakit_berat</center></td>
+                    <td><center>$key->keaktifan_sosial</center></td>
+                    <td><center>$key->pengetahuan_kesehatan</center></td>
+                    <td><center>$key->keahlian_komputer</center></td>
+                    <td><center>$key->kepribadian</center></td>
+                    <td><center>$key->mempunyai_hp</center></td>
+                    <td><center>".${'eigen'.$arrViewKriteria[$i]}."</center></td>
+                    <td><center>".${'bobotPrioritas'.$arrViewKriteria[$i]}."</center></td>
+                    <td><center>".${'sintesa'.$arrViewKriteria[$i]}."</center></td>
+                    <td><center>".${'eigenMax'.$arrViewKriteria[$i]}."</center></td>
+                </tr>";
+                $i++;
+        }
+        $resultView .= "
+            <tr>
+                <td colspan='8'><center>Total</center></td>
+                <td>$sumEigen</td>
+                <td>$sumBobotPrioritas</td>
+                <td></td>
+                <td>$sumEigenMax</td>
+            </tr>
+        ";
+        $resultView .= '</tbody></table>';
+
+        $resultView .= '<h4>Uji Konsistensi</h4>';
+        $resultView .= '<table class="table table-responsive table-striped mb-3">';
+        $resultView .= "<tbody>
+                    <tr>
+                    <th>Lambda</th>
+                    <td>$lambdaMax</td>
+                    </tr>
+                    <tr>
+                    <th>CI</th>
+                    <td>$newCI</td>
+                    </tr>
+                    <tr>
+                    <th>CR</th>
+                    <td>$newCR</td>
+                    </tr>
+                    <tr>
+                    <th>Status</th>
+                    <td>".(($newCR < 0.1) ? 'KONSISTEN' : 'TIDAK KONSISTEN')."</td>
+                    </tr>
+                </tbody></table>";
+
         $res = (object) array(
             'status' => ($newCR < 0.1) ? 'KONSISTEN' : 'TIDAK KONSISTEN',
             'lambda' => $lambdaMax,
             'ci'     => $newCI,
             'cr'     => $newCR,
             'matrix' => $matrix,
+            'resultView' => $resultView
         );
         return $res;
     }
@@ -341,6 +415,7 @@ class RangkingController extends Controller
     {
         $dataAHP = $this->ahp();
         $kriteria = $dataAHP->matrix;
+        $resultView = $dataAHP->resultView;
         $bobot = [];
 
         for ($i=0; $i < 7; $i++) { 
@@ -360,20 +435,31 @@ class RangkingController extends Controller
             $matrix[$i]->mempunyai_hp = $this->convertToScalar('mempunyai_hp', $matrix[$i]->mempunyai_hp);
         }
 
-        // echo '<table border="1">';
-        // foreach ($matrix as $key) {
-        //         echo "<tr>
-        //             <td width='200px'><center>".$key->kader->nama."</center></td>
-        //             <td width='100px'><center>$key->pendidikan</center></td>
-        //             <td width='100px'><center>$key->keaktifan_sosial</center></td>
-        //             <td width='100px'><center>$key->kepribadian</center></td>
-        //             <td width='100px'><center>$key->penyakit_berat</center></td>
-        //             <td width='100px'><center>$key->pengetahuan_kesehatan</center></td>
-        //             <td width='100px'><center>$key->keahlian_komputer</center></td>
-        //             <td width='100px'><center>$key->mempunyai_hp</center></td>
-        //         </tr>";
-        // }
-        // echo '</table>';
+        $resultView .= '<hr><h3>Proses TOPSIS</h3><h4>Nilai Kriteria Tiap Alternatif</h4>';
+        $resultView .= '<table class="table table-responsive table-striped mb-3">';
+        $resultView .= "<thead><tr>
+                    <th><center>Nama</center></th>
+                    <th><center>Pendidikan</center></th>
+                    <th><center>Keaktifan Sosial</center></th>
+                    <th><center>Kepribadian</center></th>
+                    <th><center>Penyakit Berat</center></th>
+                    <th><center>Pengetahuan Kesehatan</center></th>
+                    <th><center>Keahlian Komputer</center></th>
+                    <th><center>Mempunyai HP</center></th>
+                </tr></thead><tbody>";
+        foreach ($matrix as $key) {
+                $resultView .= "<tr>
+                    <td><center>".$key->kader->nama."</center></td>
+                    <td><center>$key->pendidikan</center></td>
+                    <td><center>$key->keaktifan_sosial</center></td>
+                    <td><center>$key->kepribadian</center></td>
+                    <td><center>$key->penyakit_berat</center></td>
+                    <td><center>$key->pengetahuan_kesehatan</center></td>
+                    <td><center>$key->keahlian_komputer</center></td>
+                    <td><center>$key->mempunyai_hp</center></td>
+                </tr>";
+        }
+        $resultView .= '</tbody></table>';
 
         //mencari pembagi
         $pembagi = ['pendidikan' => 0, 'penyakit_berat' => 0, 'pengetahuan_kesehatan' => 0, 'keaktifan_sosial' => 0, 
@@ -399,6 +485,28 @@ class RangkingController extends Controller
             }
         }
 
+        $resultView .= "<h4>Mencari Pembagi</h4>";
+        $resultView .= '<table class="table table-responsive table-striped mb-3">';
+        $resultView .= "<thead><tr>
+                    <th><center>Pendidikan</center></th>
+                    <th><center>Keaktifan Sosial</center></th>
+                    <th><center>Kepribadian</center></th>
+                    <th><center>Penyakit Berat</center></th>
+                    <th><center>Pengetahuan Kesehatan</center></th>
+                    <th><center>Keahlian Komputer</center></th>
+                    <th><center>Mempunyai HP</center></th>
+                </tr></thead><tbody>";
+        $resultView .= "<tr>
+                    <td><center>".$key['pendidikan']."</center></td>
+                    <td><center>".$key['keaktifan_sosial']."</center></td>
+                    <td><center>".$key['kepribadian']."</center></td>
+                    <td><center>".$key['penyakit_berat']."</center></td>
+                    <td><center>".$key['pengetahuan_kesehatan']."</center></td>
+                    <td><center>".$key['keahlian_komputer']."</center></td>
+                    <td><center>".$key['mempunyai_hp']."</center></td>
+                </tr>";
+        $resultView .= '</tbody></table>';
+
         //menghitung matrix ternormalisasi dan bobot ternormalisasi        
         $matrixNormalisasi = array();
         $bobotNormalisasi = array();
@@ -406,7 +514,8 @@ class RangkingController extends Controller
         $i = 0;
         foreach ($matrix as $key) {
             $matrixNormalisasi[$i] = new \stdClass();
-            $matrixNormalisasi[$i]->kader_id = $key->kader_id; //jangan lupa diganti
+            $matrixNormalisasi[$i]->kader_id = $key->kader_id; 
+            $matrixNormalisasi[$i]->kader_nama = $key->kader->nama; 
             $matrixNormalisasi[$i]->pendidikan = (($key->pendidikan / $pembagi['pendidikan']));
             $matrixNormalisasi[$i]->keaktifan_sosial = (($key->keaktifan_sosial / $pembagi['keaktifan_sosial']));
             $matrixNormalisasi[$i]->penyakit_berat = (($key->penyakit_berat / $pembagi['penyakit_berat']));
@@ -417,6 +526,7 @@ class RangkingController extends Controller
 
             $bobotNormalisasi[$i] = new \stdClass();
             $bobotNormalisasi[$i]->kader_id = $matrixNormalisasi[$i]->kader_id;
+            $bobotNormalisasi[$i]->kader_nama = $matrixNormalisasi[$i]->kader_nama;
             $bobotNormalisasi[$i]->pendidikan = (($matrixNormalisasi[$i]->pendidikan * $bobot[0]));
             $bobotNormalisasi[$i]->keaktifan_sosial = (($matrixNormalisasi[$i]->keaktifan_sosial * $bobot[1]));
             $bobotNormalisasi[$i]->kepribadian = (($matrixNormalisasi[$i]->kepribadian * $bobot[2]));
@@ -429,61 +539,82 @@ class RangkingController extends Controller
         }
 
 
-        // echo '<h1>BOBOT AHP</h1><table border="1">';
-        // for($o=0; $o < 1; $o++) {
-        //     echo "
-        //     <tr>
-        //         <td width='200px'><center>Pendidikan</center></td>
-        //         <td width='200px'><center>".$bobot[0]."</center></td></tr><tr>
-        //         <td width='100px'><center>Keaktifan Sosial</center></td>
-        //         <td width='100px'><center>".$bobot[1]."</center></td></tr><tr>
-        //         <td width='100px'><center>Kepribadian</center></td>
-        //         <td width='100px'><center>".$bobot[2]."</center></td></tr><tr>
-        //         <td width='100px'><center>Penyakit Berat</center></td>
-        //         <td width='100px'><center>".$bobot[3]."</center></td></tr><tr>
-        //         <td width='100px'><center>Pengetahuan Kesehatan</center></td>
-        //         <td width='100px'><center>".$bobot[4]."</center></td></tr><tr>
-        //         <td width='100px'><center>Keahlian Komputer</center></td>
-        //         <td width='100px'><center>".$bobot[5]."</center></td></tr><tr>
-        //         <td width='100px'><center>Mempunyai HP</center></td>
-        //         <td width='100px'><center>".$bobot[6]."</center></td></tr>";
-        // }
-        // echo '</table>';
+        $resultView .= '<h4>Bobot Hasil Perhitungan AHP</h4><table class="table table-responsive table-striped mb-3">';
+        for($o=0; $o < 1; $o++) {
+            $resultView .= "
+            <tr>
+                <td><center>Pendidikan</center></td>
+                <td><center>".$bobot[0]."</center></td></tr><tr>
+                <td><center>Keaktifan Sosial</center></td>
+                <td><center>".$bobot[1]."</center></td></tr><tr>
+                <td><center>Kepribadian</center></td>
+                <td><center>".$bobot[2]."</center></td></tr><tr>
+                <td><center>Penyakit Berat</center></td>
+                <td><center>".$bobot[3]."</center></td></tr><tr>
+                <td><center>Pengetahuan Kesehatan</center></td>
+                <td><center>".$bobot[4]."</center></td></tr><tr>
+                <td><center>Keahlian Komputer</center></td>
+                <td><center>".$bobot[5]."</center></td></tr><tr>
+                <td><center>Mempunyai HP</center></td>
+                <td><center>".$bobot[6]."</center></td></tr>";
+        }
+        $resultView .= '</tbody></table>';
         
-        // echo '<h1>Matrix Normalisasi</h1><table border="1">';
-        // foreach ($matrixNormalisasi as $key) {
-        //         echo "<tr>
-        //             <td width='200px'><center>".$key->kader_id."</center></td>
-        //             <td width='100px'><center>$key->pendidikan</center></td>
-        //             <td width='100px'><center>$key->keaktifan_sosial</center></td>
-        //             <td width='100px'><center>$key->kepribadian</center></td>
-        //             <td width='100px'><center>$key->penyakit_berat</center></td>
-        //             <td width='100px'><center>$key->pengetahuan_kesehatan</center></td>
-        //             <td width='100px'><center>$key->keahlian_komputer</center></td>
-        //             <td width='100px'><center>$key->mempunyai_hp</center></td>
-        //         </tr>";
-        // }
-        // echo '</table>';
+        $resultView .= '<h4>Matrix Normalisasi</h4><table class="table table-responsive table-striped mb-3">';
+        $resultView .= "<thead><tr>
+                    <th><center>Nama</center></th>
+                    <th><center>Pendidikan</center></th>
+                    <th><center>Keaktifan Sosial</center></th>
+                    <th><center>Kepribadian</center></th>
+                    <th><center>Penyakit Berat</center></th>
+                    <th><center>Pengetahuan Kesehatan</center></th>
+                    <th><center>Keahlian Komputer</center></th>
+                    <th><center>Mempunyai HP</center></th>
+                </tr></thead><tbody>";
+        foreach ($matrixNormalisasi as $key) {
+                $resultView .= "<tr>
+                    <td><center>".$key->kader_nama."</center></td>
+                    <td><center>$key->pendidikan</center></td>
+                    <td><center>$key->keaktifan_sosial</center></td>
+                    <td><center>$key->kepribadian</center></td>
+                    <td><center>$key->penyakit_berat</center></td>
+                    <td><center>$key->pengetahuan_kesehatan</center></td>
+                    <td><center>$key->keahlian_komputer</center></td>
+                    <td><center>$key->mempunyai_hp</center></td>
+                </tr>";
+        }
+        $resultView .= '</tbody></table>';
 
-        // echo '<h1>Bobot Normalisasi</h1><table border="1">';
-        // foreach ($bobotNormalisasi as $key) {
-        //         echo "<tr>
-        //             <td width='200px'><center>".$key->kader_id."</center></td>
-        //             <td width='100px'><center>$key->pendidikan</center></td>
-        //             <td width='100px'><center>$key->keaktifan_sosial</center></td>
-        //             <td width='100px'><center>$key->kepribadian</center></td>
-        //             <td width='100px'><center>$key->penyakit_berat</center></td>
-        //             <td width='100px'><center>$key->pengetahuan_kesehatan</center></td>
-        //             <td width='100px'><center>$key->keahlian_komputer</center></td>
-        //             <td width='100px'><center>$key->mempunyai_hp</center></td>
-        //         </tr>";
-        // }
-        // echo '</table>';
+        $resultView .= '<h4>Bobot Normalisasi</h4><table class="table table-responsive table-striped mb-3">';
+        $resultView .= "<thead><tr>
+                    <th><center>Nama</center></th>
+                    <th><center>Pendidikan</center></th>
+                    <th><center>Keaktifan Sosial</center></th>
+                    <th><center>Kepribadian</center></th>
+                    <th><center>Penyakit Berat</center></th>
+                    <th><center>Pengetahuan Kesehatan</center></th>
+                    <th><center>Keahlian Komputer</center></th>
+                    <th><center>Mempunyai HP</center></th>
+                </tr></thead><tbody>";
+        foreach ($bobotNormalisasi as $key) {
+                $resultView .= "<tr>
+                    <td><center>".$key->kader_nama."</center></td>
+                    <td><center>$key->pendidikan</center></td>
+                    <td><center>$key->keaktifan_sosial</center></td>
+                    <td><center>$key->kepribadian</center></td>
+                    <td><center>$key->penyakit_berat</center></td>
+                    <td><center>$key->pengetahuan_kesehatan</center></td>
+                    <td><center>$key->keahlian_komputer</center></td>
+                    <td><center>$key->mempunyai_hp</center></td>
+                </tr>";
+        }
+        $resultView .= '</tbody></table>';
 
 
         //menghitung solusi ideal positif dan solusi ideal negatif
         $data = $bobotNormalisasi;
         $mKaderId = [];
+        $mKaderNama = [];
         $mPendidikan = [];
         $mPenyakitBerat = [];
         $mPengetahuanKesehatan = [];
@@ -495,6 +626,7 @@ class RangkingController extends Controller
         $i = 0;
         foreach ($data as $key) {
             $mKaderId[$i] = $key->kader_id;
+            $mKaderNama[$i] = $key->kader_nama;
             $mPendidikan[$i] = $key->pendidikan;
             $mKeaktifanSosial[$i] = $key->keaktifan_sosial;
             $mKepribadian[$i] = $key->kepribadian;
@@ -523,18 +655,18 @@ class RangkingController extends Controller
         $y6Negatif = min($mKeahlianKomputer);
         $y7Negatif = min($mMempunyaiHp);
 
-        // echo '<h1>A+ dan A-</h1><table border="1">';
-        // echo "<tr>
-        //     <td width='200px'><center>A+</center></td>";
-        //     for ($i=1; $i < 8; $i++) { 
-        //         echo "<td width='100px'><center>".${'y'.$i.'Positif'}."</center></td>";
-        //     }
-        // echo "<tr>
-        //     <td width='200px'><center>A-</center></td>";
-        // for ($i=1; $i < 8; $i++) { 
-        //     echo "<td width='100px'><center>".${'y'.$i.'Negatif'}."</center></td>";
-        // }
-        // echo '</table>';
+        $resultView .= '<h4>A+ dan A-</h4><table class="table table-responsive table-striped mb-3">';
+        $resultView .= "<tr>
+            <td><center>A+</center></td>";
+            for ($i=1; $i < 8; $i++) { 
+                $resultView .= "<td><center>".${'y'.$i.'Positif'}."</center></td>";
+            }
+        $resultView .= "<tr>
+            <td><center>A-</center></td>";
+        for ($i=1; $i < 8; $i++) { 
+            $resultView .= "<td><center>".${'y'.$i.'Negatif'}."</center></td>";
+        }
+        $resultView .= '</table>';
 
         //perhitungan solusi ideal
         $dPositif = array();
@@ -544,6 +676,7 @@ class RangkingController extends Controller
         for ($i = 0; $i < count($mKaderId); $i++) {
             $dPositif[$i] = new \stdClass();
             $dPositif[$i]->kader_id = $mKaderId[$i];
+            $dPositif[$i]->kader_nama = $mKaderNama[$i];
             $dPositif[$i]->dPositif = sqrt(
                 pow(($y1Positif - $mPendidikan[$i]), 2) +
                 pow(($y2Positif - $mKeaktifanSosial[$i]), 2) +
@@ -559,6 +692,7 @@ class RangkingController extends Controller
         for ($i = 0; $i < count($mKaderId); $i++) {
             $dNegatif[$i] = new \stdClass();
             $dNegatif[$i]->kader_id = $mKaderId[$i];
+            $dNegatif[$i]->kader_nama = $mKaderNama[$i];
             $dNegatif[$i]->dNegatif = sqrt(
                 pow(($mPendidikan[$i] - $y1Negatif), 2) +
                 pow(($mKeaktifanSosial[$i] - $y2Negatif), 2) +
@@ -570,28 +704,23 @@ class RangkingController extends Controller
             );
         }
 
-        // echo '<h1>D+</h1><table border="1">';
-        // foreach ($dPositif as $key) {
-        //         echo "<tr>
-        //             <td width='200px'><center>".$key->kader_id."</center></td>
-        //             <td width='100px'><center>$key->dPositif</center></td>
-        //         </tr>";
-        // }
-        // echo '</table>';
-
-        
-        // echo '<h1>D-</h1><table border="1">';
-        // foreach ($dNegatif as $key) {
-        //         echo "<tr>
-        //             <td width='200px'><center>".$key->kader_id."</center></td>
-        //             <td width='100px'><center>$key->dNegatif</center></td>
-        //         </tr>";
-        // }
-        // echo '</table>';
-
         //hitung nilai preferensi
         $positif = $dPositif;
         $negatif = $dNegatif;
+
+        $resultView .= '<table class="table table-responsive table-striped mb-3">
+                <tr><td>Nama</td><td>D+</td><td>D-</td><td>Nilai Preferensi</td></tr>';
+        $i=0;
+        foreach ($dPositif as $key) {
+                $resultView .= "<tr>
+                    <td><center>".$key->kader_nama."</center></td>
+                    <td><center>$key->dPositif</center></td>
+                    <td><center>".$dNegatif[$i]->dNegatif."</center></td>
+                    <td><center>".($negatif[$i]->dNegatif / ($negatif[$i]->dNegatif + $positif[$i]->dPositif))."</center></td>
+                </tr>";
+                $i++;
+        }
+        $resultView .= '</table>';
 
         Rangking::truncate();
         for ($i = 0; $i < count($negatif); $i++) {
@@ -604,6 +733,7 @@ class RangkingController extends Controller
         $res = (object) array(
             'dNegatif' => $positif,
             'dPositif' => $negatif,
+            'resultView' => $resultView
         );
         return $res;
     }
