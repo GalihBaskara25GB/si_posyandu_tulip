@@ -7,6 +7,8 @@ use NumPHP\Core\NumArray;
 use App\Models\Rangking;
 use App\Models\Kriteria;
 
+use PDF;
+
 class RangkingController extends Controller
 {
     /**
@@ -25,7 +27,6 @@ class RangkingController extends Controller
 
         $ahp = $this->ahp();
         $topsis = $this->topsis();
-        // dd($this->ahp());
 
         if(isset($request->field) && isset($request->keyword)) {
             $field = $request->field;
@@ -46,7 +47,7 @@ class RangkingController extends Controller
         }  
          
         return view('rangking.index',compact('rangkings', 'numRecords', 'message', 'ahp', 'topsis'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+            ->with('i', (request()->input('page', 1) - 1) * 10);
     }
 
     /**
@@ -114,6 +115,13 @@ class RangkingController extends Controller
     {
         //
     }
+
+    public function generatePdf() {
+        $rangkings = Rangking::orderBy('nilai_preferensi', 'desc')->get();
+        $pdf = PDF::loadview('laporan.rangking', ['rangkings' => $rangkings]);
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->download('laporan-rangking');
+    } 
 
     public function ahp()
     {

@@ -113,7 +113,7 @@
               <tbody>
               @php
                 $currentPage = Request::__get('page');
-                (is_null($currentPage)) ? $i = 1 : $i = (($currentPage-1)*5)+1;
+                (is_null($currentPage)) ? $i = 1 : $i = (($currentPage-1)*10)+1;
               @endphp
               @foreach ($rangkings as $rangking)
                 <tr>
