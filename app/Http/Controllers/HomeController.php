@@ -58,4 +58,9 @@ class HomeController extends Controller
         return view('rangking.user-rangking',compact('rangkings', 'numRecords', 'message', 'currentUserRank'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }
+
+    public function aboutUs() 
+    {
+        return view('dashboard.aboutUs');
+    }
 }

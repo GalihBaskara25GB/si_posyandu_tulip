@@ -32,6 +32,7 @@ Route::get('topsis', [PerhitunganController::class, 'topsis'])->name('topsis');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('home', [HomeController::class, 'index'])->name('home');
+    Route::get('about', [HomeController::class, 'aboutUs'])->name('about');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
     //Users Page

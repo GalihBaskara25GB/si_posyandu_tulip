@@ -49,6 +49,15 @@
       </a>
     </li>
     @endif
+    <li class="nav-item nav-category">
+      <span class="nav-link">Informasi</span>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{route('about')}}">
+        <span class="menu-title">About Us</span>
+        <i class="icon-credit-card menu-icon"></i>
+      </a>
+    </li>
 
   </ul>
 </nav>
